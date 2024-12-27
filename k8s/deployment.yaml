@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-security
+  labels:
+    app: container-security
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: container-security
+  template:
+    metadata:
+      labels:
+        app: container-security
+    spec:
+      containers:
+      - name: container-security
+        image: pranav224/container-security-image:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ENV
+          value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: container-security-service
+spec:
+  selector:
+    app: container-security
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
