@@ -32,7 +32,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    bat 'kubectl apply -f kubernetes/deployment.yaml'
+                    bat 'kubectl apply -f k8s/deployment.yaml'
                 }
             }
         }
