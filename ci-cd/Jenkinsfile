@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/pranav8722/container-security.git'
+                git 'https://github.com/Pranav8722/container-security.git'
             }
         }
         stage('Build Docker Image') {
