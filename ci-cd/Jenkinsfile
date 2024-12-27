@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_CREDENTIALS = credentials('docker_hub_creds') // Use the ID from the credentials manager
+        DOCKER_HUB_USERNAME = 'pranav224'  // Docker Hub Username
+        DOCKER_HUB_ACCESS_TOKEN = credentials('docker_hub_access_token')  // Use the Jenkins credentials ID for the access token
     }
     stages {
         stage('Checkout') {
@@ -26,10 +27,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker_hub_creds', usernameVariable: 'DOCKER_CREDENTIALS_USR', passwordVariable: 'DOCKER_CREDENTIALS_PSW')]) {
-                        bat 'echo %DOCKER_CREDENTIALS_PSW% | docker login -u %DOCKER_CREDENTIALS_USR% --password-stdin'
-                        bat 'docker push pranav224/container-security-image:latest'
-                    }
+                    // Log in to Docker using Jenkins credentials (username and token)
+                    bat "echo %DOCKER_HUB_ACCESS_TOKEN% | docker login -u %DOCKER_HUB_USERNAME% --password-stdin"
+                    bat 'docker push pranav224/container-security-image:latest'
                 }
             }
         }
@@ -39,6 +39,14 @@ pipeline {
                     bat 'kubectl apply -f kubernetes/deployment.yaml'
                 }
             }
+        }
+    }
+    post {
+        success {
+            echo "Pipeline completed successfully."
+        }
+        failure {
+            echo "Pipeline failed. Please check the logs."
         }
     }
 }
