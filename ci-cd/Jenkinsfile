@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'secure-app'
-        REGISTRY_URL = 'harbor.myorg.com'
+         DOCKER_IMAGE = 'container-security-image'
+    REGISTRY_URL = 'docker.io/pranav224'
     }
     stages {
         stage('Checkout') {
