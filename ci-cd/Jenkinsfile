@@ -3,12 +3,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Clone the repository
                 git 'https://github.com/Pranav8722/container-security.git'
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image
                     bat 'docker build -t pranav224/container-security-image:latest -f images/Dockerfile .'
                 }
             }
@@ -16,6 +18,7 @@ pipeline {
         stage('Scan Docker Image with Trivy') {
             steps {
                 script {
+                    // Scan the Docker image for vulnerabilities
                     bat 'trivy image pranav224/container-security-image:latest'
                 }
             }
@@ -23,8 +26,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Directly provide the token for Docker login
+                    // Docker login using a direct token
                     bat 'echo dckr_pat_EDzEoL3X8MIugIjpk20T364-1ks | docker login -u pranav224 --password-stdin'
+                    // Push the image to Docker Hub
                     bat 'docker push pranav224/container-security-image:latest'
                 }
             }
@@ -32,9 +36,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // bat 'kubectl apply -f k8s/deployment.yaml'
+                    // Apply the Kubernetes deployment and service YAML
                     bat 'kubectl apply -f k8s/deployment.yaml --validate=false'
-
                 }
             }
         }
