@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // Apply the Kubernetes deployment and service YAML
-                    bat 'kubectl apply -f k8s/deployment.yaml --validate=false'
+                    bat 'kubectl --kubeconfig="C:\\Users\\prana\\.kube\\config" apply -f k8s/deployment.yaml --validate=false'
                 }
             }
         }
