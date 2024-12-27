@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
@@ -23,30 +24,36 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Directly provide the token for Docker login
                     bat 'echo dckr_pat_EDzEoL3X8MIugIjpk20T364-1ks | docker login -u pranav224 --password-stdin'
                     bat 'docker push pranav224/container-security-image:latest'
                 }
             }
         }
-     stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            // bat 'kubectl apply -f k8s/deployment.yaml'
-            bat 'kubectl apply -f k8s/deployment.yaml --validate=false'
-
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    bat 'kubectl --kubeconfig="C:\\Users\\prana\\.kube\\config" apply -f k8s/deployment.yaml --validate=false'
+                }
+            }
         }
     }
-}
 
     post {
+        always {
+            echo 'Performing cleanup...'
+            deleteDir() // Clean up workspace
+        }
         success {
-            echo "Pipeline completed successfully."
+            echo 'Pipeline succeeded!'
+            mail to: 'team@example.com',
+                 subject: 'Pipeline Success',
+                 body: 'The Jenkins pipeline completed successfully!'
         }
         failure {
-            echo "Pipeline failed. Please check the logs."
+            echo 'Pipeline failed!'
+            mail to: 'team@example.com',
+                 subject: 'Pipeline Failure',
+                 body: 'The Jenkins pipeline failed. Check the logs for details.'
         }
-    }
-
     }
 }
