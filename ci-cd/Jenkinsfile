@@ -16,15 +16,15 @@ pipeline {
         stage('Scan Docker Image with Trivy') {
             steps {
                 script {
-                    bat "trivy image pranav224/container-security-image:latest"
+                    bat 'trivy image pranav224/container-security-image:latest'
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Replace with your actual username and password
-                    bat 'echo dckr_pat_TClVLDq_JLHoSsNbQ3GtGH9NuTU | docker login -u pranav224 --password-stdin'
+                    // Directly provide the token for Docker login
+                    bat 'echo dckr_pat_EDzEoL3X8MIugIjpk20T364-1ks | docker login -u pranav224 --password-stdin'
                     bat 'docker push pranav224/container-security-image:latest'
                 }
             }
@@ -35,14 +35,6 @@ pipeline {
                     bat 'kubectl apply -f kubernetes/deployment.yaml'
                 }
             }
-        }
-    }
-    post {
-        success {
-            echo "Pipeline completed successfully."
-        }
-        failure {
-            echo "Pipeline failed. Please check the logs."
         }
     }
 }
