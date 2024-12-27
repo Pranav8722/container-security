@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
@@ -23,7 +24,6 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Directly provide the token for Docker login
                     bat 'echo dckr_pat_EDzEoL3X8MIugIjpk20T364-1ks | docker login -u pranav224 --password-stdin'
                     bat 'docker push pranav224/container-security-image:latest'
                 }
@@ -37,15 +37,19 @@ pipeline {
             }
         }
     }
-    // Optional: Remove or comment out the 'post' section if you no longer need email notifications
-    
+
     post {
+        always {
+            echo 'Performing cleanup...'
+            deleteDir() // Clean up workspace
+        }
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'Pipeline succeeded!'
+           
         }
         failure {
-            echo 'Pipeline failed. Please check the logs.'
+            echo 'Pipeline failed!'
+            
         }
     }
-    
 }
