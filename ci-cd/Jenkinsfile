@@ -12,18 +12,18 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${REGISTRY_URL}/${DOCKER_IMAGE}:latest ."
+                bat "docker build -t ${REGISTRY_URL}/${DOCKER_IMAGE}:latest ."
             }
         }
         stage('Scan Docker Image') {
             steps {
-                sh "sh scanners/trivy-scan.sh ${REGISTRY_URL}/${DOCKER_IMAGE}:latest"
+                bat "sh scanners/trivy-scan.sh ${REGISTRY_URL}/${DOCKER_IMAGE}:latest"
             }
         }
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
+                    bat '''
                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                     docker push ${REGISTRY_URL}/${DOCKER_IMAGE}:latest
                     '''
@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
+                bat 'kubectl apply -f k8s/deployment.yaml'
             }
         }
     }
