@@ -15,14 +15,14 @@ pipeline {
                 }
             }
         }
-        stage('Scan Docker Image') {
-            steps {
-                script {
-                    // Scan the Docker image
-                    bat 'docker scan pranav224/container-security-image:latest'
-                }
-            }
+     stage('Scan Docker Image with Trivy') {
+    steps {
+        script {
+            bat "trivy image pranav224/container-security-image:latest"
         }
+    }
+}
+
         stage('Push Docker Image') {
             steps {
                 script {
