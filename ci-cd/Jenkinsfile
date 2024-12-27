@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_CREDENTIALS = credentials('docker_hub_creds') // Use the ID from the credentials manager
+        DOCKER_CREDENTIALS = credentials('docker_hub_creds') // Use the ID from Jenkins Credentials
     }
     stages {
         stage('Checkout') {
@@ -17,19 +17,19 @@ pipeline {
             }
         }
         stage('Scan Docker Image with Trivy') {
-    steps {
-        script {
-            bat "trivy image pranav224/container-security-image:latest"
+            steps {
+                script {
+                    bat "trivy image pranav224/container-security-image:latest"
+                }
+            }
         }
-    }
-}
-
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Log in to Docker using Jenkins credentials
-                    bat "echo %DOCKER_CREDENTIALS_PSW% | docker login -u %DOCKER_CREDENTIALS_USR% --password-stdin"
-                    bat 'docker push pranav224/container-security-image:latest'
+                    withCredentials([usernamePassword(credentialsId: 'docker_hub_creds', usernameVariable: 'DOCKER_CREDENTIALS_USR', passwordVariable: 'DOCKER_CREDENTIALS_PSW')]) {
+                        bat 'echo %DOCKER_CREDENTIALS_PSW% | docker login -u %DOCKER_CREDENTIALS_USR% --password-stdin'
+                        bat 'docker push pranav224/container-security-image:latest'
+                    }
                 }
             }
         }
