@@ -17,13 +17,12 @@ pipeline {
             }
         }
         stage('Scan Docker Image with Trivy') {
-    steps {
-        script {
-            bat "trivy image pranav224/container-security-image:latest"
+            steps {
+                script {
+                    bat "trivy image pranav224/container-security-image:latest"
+                }
+            }
         }
-    }
-}
-
         stage('Push Docker Image') {
             steps {
                 script {
