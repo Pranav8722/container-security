@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_HUB_USERNAME = 'pranav224'  // Docker Hub Username
-        DOCKER_HUB_ACCESS_TOKEN = credentials('docker_hub_access_token')  // Use Jenkins credentials for the access token
-    }
     stages {
         stage('Checkout') {
             steps {
@@ -27,10 +23,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Log in to Docker using Jenkins credentials
-                    withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKER_HUB_ACCESS_TOKEN')]) {
-                        bat "echo %DOCKER_HUB_ACCESS_TOKEN% | docker login -u %DOCKER_HUB_USERNAME% --password-stdin"
-                    }
+                    // Replace with your actual username and password
+                    bat 'echo dckr_pat_TClVLDq_JLHoSsNbQ3GtGH9NuTU | docker login -u pranav224 --password-stdin'
                     bat 'docker push pranav224/container-security-image:latest'
                 }
             }
