@@ -17,7 +17,7 @@ pipeline {
         stage('Scan Docker Image with Trivy') {
             steps {
                 script {
-                    bat 'trivy image pranav224/container-security-image:latest'
+                    bat 'C:\\Jenkins\\scanners\\trivy-scan.bat my-image:latest'
                 }
             }
         }
