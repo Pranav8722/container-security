@@ -1,33 +1,38 @@
 pipeline {
     agent any
     environment {
-         DOCKER_IMAGE = 'container-security-image'
-    REGISTRY_URL = 'docker.io/pranav224'
+        DOCKER_IMAGE = 'container-security-image' // Name of the Docker image
+        REGISTRY_URL = 'docker.io/pranav224'      // Docker Hub registry URL
     }
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Pranav8722/container-security.git'
+                git url: 'https://github.com/Pranav8722/container-security.git'
             }
         }
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t $REGISTRY_URL/$DOCKER_IMAGE:latest .'
+                sh "docker build -t ${REGISTRY_URL}/${DOCKER_IMAGE}:latest ."
             }
         }
         stage('Scan Docker Image') {
             steps {
-                bat 'sh scanners/trivy-scan.sh $REGISTRY_URL/$DOCKER_IMAGE:latest'
+                sh "sh scanners/trivy-scan.sh ${REGISTRY_URL}/${DOCKER_IMAGE}:latest"
             }
         }
         stage('Push Docker Image') {
             steps {
-                bat 'docker push $REGISTRY_URL/$DOCKER_IMAGE:latest'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push ${REGISTRY_URL}/${DOCKER_IMAGE}:latest
+                    '''
+                }
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
     }
