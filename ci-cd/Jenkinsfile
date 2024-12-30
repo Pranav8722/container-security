@@ -17,7 +17,7 @@ pipeline {
         stage('Scan Docker Image with Trivy') {
             steps {
                 script {
-                    bat 'C:\Users\prana\container-security\scanners\trivy-scan.bat pranav224/container-security-image:latest'
+                    bat 'C:\\Users\\prana\\container-security\\scanners\\trivy-scan.bat pranav224/container-security-image:latest'
                     
                 }
             }
